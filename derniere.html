@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Job Finder — Trouvez votre emploi idéal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0f;--card:#1a1a26;--border:rgba(255,255,255,.07);
+    --accent:#6c63ff;--accent2:#ff6584;--accent3:#8a1ba0;
+    --text:#e8e8f0;--muted:#6b6b8a;
+    --morning:#ffd166;--afternoon:#06d6a0;--evening:#8338ec;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse 60% 40% at 10% 20%,rgba(108,99,255,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 80%,rgba(255,101,132,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(67,233,123,.05) 0%,transparent 60%)}
+  .container{max-width:900px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:56px;animation:fadeDown .8s ease both}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:500;color:#a29bff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .badge::before{content:'✦';color:var(--accent)}
+ .hero h1{
+      font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5.5vw,4.5rem);
+      font: weight 500px;;line-height:1.06;letter-spacing:-.04em;margin-bottom:1.1rem;
+    }
+    .hero h1 em{
+      font-style:normal;
+      background:linear-gradient(135deg,var(--accent) 0%,var(--pink) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+  header p{color:var(--muted);font-size:1rem;font-weight:300;max-width:460px;margin:0 auto;line-height:1.6}
+
+  .steps{display:flex;align-items:center;justify-content:center;margin-bottom:48px;animation:fadeDown .8s .1s ease both}
+  .step-item{display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s}
+  .step-item.inactive{opacity:.35}
+  .step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;border:1.5px solid var(--border);background:var(--card);transition:all .3s}
+  .step-item.active .step-num{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 20px rgba(108,99,255,.5)}
+  .step-item.done .step-num{background:var(--accent3);border-color:var(--accent3);color:#fff}
+  .step-label{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
+  .step-item.active .step-label{color:var(--text)}
+  .step-line{width:40px;height:1px;background:var(--border);margin:0 4px}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;animation:fadeUp .6s ease both;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.4),transparent)}
+  .card-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+  .card-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(108,99,255,.15);flex-shrink:0}
+  .card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700}
+  .card-subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field-span2{grid-column:span 2}
+  @media(max-width:600px){.field-grid{grid-template-columns:1fr}.field-span2{grid-column:span 1}}
+  .field{display:flex;flex-direction:column;gap:8px}
+  label{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  label span.req{color:var(--accent2);margin-left:3px}
+  input[type="text"],input[type="number"],select,textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;width:100%}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:rgba(108,99,255,.07);box-shadow:0 0 0 3px rgba(108,99,255,.12)}
+  input::placeholder,textarea::placeholder{color:var(--muted)}
+  select option{background:#1e1e2e}
+
+  .tags-wrapper{display:flex;flex-wrap:wrap;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;min-height:48px;cursor:text;transition:all .2s}
+  .tags-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.12)}
+  .tag{display:flex;align-items:center;gap:5px;background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.3);border-radius:6px;padding:3px 10px;font-size:12px;font-weight:500;color:#a29bff;animation:popIn .2s ease}
+  .tag button{background:none;border:none;color:#a29bff;cursor:pointer;padding:0;font-size:14px;line-height:1;opacity:.7}
+  .tag button:hover{opacity:1}
+  .tags-input{background:none!important;border:none!important;border-radius:0!important;padding:2px 4px!important;flex:1;min-width:100px;font-size:13px;box-shadow:none!important}
+
+  .calendar-grid{display:grid;grid-template-columns:90px repeat(7,1fr);gap:3px;user-select:none}
+  .cal-header{font-size:11px;font-weight:700;text-align:center;padding:8px 4px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+  .cal-time-label{font-size:11px;color:var(--muted);display:flex;align-items:center;padding-right:8px;gap:6px;line-height:1.4}
+  .cal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .cal-cell{border-radius:8px;height:54px;border:1.5px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+  .cal-cell:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05)}
+  .cal-cell.selected-morning{background:rgba(255,209,102,.18);border-color:rgba(255,209,102,.45)}
+  .cal-cell.selected-afternoon{background:rgba(6,214,160,.18);border-color:rgba(6,214,160,.45)}
+  .cal-cell.selected-evening{background:rgba(131,56,236,.18);border-color:rgba(131,56,236,.45)}
+  .cal-cell::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0;transition:opacity .15s}
+  .cal-cell.selected-morning::after,.cal-cell.selected-afternoon::after,.cal-cell.selected-evening::after{opacity:.7}
+  .cal-legend{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap}
+  .cal-legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+  .legend-dot{width:10px;height:10px;border-radius:3px}
+
+  .job-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  @media(max-width:500px){.job-type-grid{grid-template-columns:1fr 1fr}}
+  .job-type-btn{cursor:pointer}
+  .job-type-btn input{display:none}
+  .job-type-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;border-radius:14px;border:1.5px solid var(--border);background:rgba(255,255,255,.02);transition:all .2s;text-align:center}
+  .job-type-btn input:checked+.job-type-card{border-color:var(--accent);background:rgba(108,99,255,.12);box-shadow:0 0 20px rgba(108,99,255,.2)}
+  .job-type-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04)}
+  .job-type-icon{font-size:28px}
+  .job-type-label{font-family:'Syne',sans-serif;font-size:13px;font-weight:600}
+  .job-type-desc{font-size:11px;color:var(--muted);line-height:1.4}
+
+  .cv-dropzone{border:2px dashed rgba(108,99,255,.3);border-radius:16px;padding:36px 24px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(108,99,255,.04);position:relative}
+  .cv-dropzone:hover,.cv-dropzone.dragging{border-color:var(--accent);background:rgba(108,99,255,.1);transform:scale(1.01)}
+  .cv-dropzone input{display:none}
+  .cv-icon{font-size:40px;margin-bottom:12px;display:block}
+  .cv-dropzone h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px}
+  .cv-dropzone p{font-size:12px;color:var(--muted);margin-bottom:16px}
+  .cv-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.35);color:#a29bff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer}
+  .cv-preview{display:none;align-items:center;gap:12px;background:rgba(67,233,123,.08);border:1px solid rgba(67,233,123,.2);border-radius:12px;padding:14px 18px;margin-top:14px;text-align:left}
+  .cv-preview.show{display:flex}
+  .cv-preview-name{font-size:13px;font-weight:500;color:var(--accent3)}
+  .cv-preview-size{font-size:11px;color:var(--muted);margin-top:2px}
+  .cv-remove{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px}
+
+  .range-wrapper{position:relative;padding-top:6px}
+  .range-value{position:absolute;top:-28px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;transform:translateX(-50%);pointer-events:none}
+  .range-value::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--accent)}
+  input[type="range"]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(255,255,255,.1);outline:none;padding:0;border:none;box-shadow:none}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 10px rgba(108,99,255,.6);transition:transform .1s}
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+
+  .sector-btn{padding:8px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+  .sector-btn.active{background:rgba(108,99,255,.18)!important;border-color:rgba(108,99,255,.4)!important;color:#a29bff!important}
+
+  .submit-btn{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--accent),#9b8fff);border:none;border-radius:16px;padding:18px 48px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;transition:all .25s;box-shadow:0 8px 30px rgba(108,99,255,.4);letter-spacing:.02em}
+  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(108,99,255,.55)}
+  .submit-btn:active{transform:translateY(0)}
+
+  .loading{display:none;flex-direction:column;align-items:center;padding:56px 48px;gap:20px}
+  .loading.show{display:flex}
+  .spinner{width:52px;height:52px;border:3px solid rgba(108,99,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  .loading-text{font-size:14px;color:var(--muted);text-align:center;line-height:1.6}
+  .loading-text strong{display:block;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .loading-steps{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .loading-step{display:flex;align-items:center;gap:10px;font-size:13px;opacity:.3;transition:opacity .4s,color .4s}
+  .loading-step.active{opacity:1;color:var(--accent3)}
+  .loading-step .ldot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+  #results-panel{display:none;animation:fadeUp .6s ease both}
+  #results-panel.show{display:block}
+  .results-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .results-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800}
+  .results-count{background:rgba(67,233,123,.15);border:1px solid rgba(67,233,123,.25);color:var(--accent3);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600}
+  .filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+  .filter-chip{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+  .filter-chip.active{background:rgba(108,99,255,.18);border-color:rgba(108,99,255,.35);color:#a29bff}
+
+  .job-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.job-cards{grid-template-columns:1fr}}
+  .job-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;transition:all .22s;display:flex;flex-direction:column;animation:fadeUp .5s ease both}
+  .job-card:hover{border-color:rgba(108,99,255,.35);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .job-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+  .job-company{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .job-title-card{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.3}
+  .job-mode-badge{flex-shrink:0;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .badge-remote{background:rgba(67,233,123,.12);border:1px solid rgba(67,233,123,.25);color:var(--accent3)}
+  .badge-onsite{background:rgba(255,101,132,.12);border:1px solid rgba(255,101,132,.25);color:var(--accent2)}
+  .badge-hybrid{background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);color:#a29bff}
+  .job-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .job-meta span{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:3px}
+  .job-salary{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px}
+  .job-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px;flex:1}
+  .job-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);gap:8px}
+  .match-wrap{display:flex;align-items:center;gap:8px;flex:1}
+  .match-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+  .match-bar{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent));border-radius:4px;width:0%;transition:width 1.2s ease}
+  .match-pct{font-size:11px;font-weight:600;color:var(--accent3);white-space:nowrap}
+  .apply-btn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--accent),#9b8fff);color:#fff;text-decoration:none;padding:7px 12px;border-radius:8px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;transition:all .2s;white-space:nowrap;flex-shrink:0}
+  .apply-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,.45)}
+
+  .error-msg{background:rgba(255,101,132,.08);border:1px solid rgba(255,101,132,.2);border-radius:12px;padding:16px 20px;color:var(--accent2);font-size:13px;line-height:1.5;margin-bottom:16px}
+
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.3);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge">Student Job Finder AI</div>
+  <h1>Trouve un job <em>compatible</em><br>avec tes études</h1>
+  <p>Notre IA génère des offres personnalisées avec des <strong style="-webkit-text-fill-color:var(--accent3);color:var(--accent3)">liens directs</strong> vers les vraies plateformes pour postuler.</p>
+</header>
+
+<div class="steps">
+  <div class="step-item active" id="step1-nav" onclick="goTo(1)"><div class="step-num">1</div><div class="step-label">Profil</div></div>
+  <div class="step-line"></div>
+  <div class="step-item inactive" id="step2-nav" onclick="goTo(2)"><div class="step-num">2</div><div class="step-label">Disponibilités</div></div>
+  <div class="step-line"></div>
+  <div class="step-item inactive" id="step3-nav" onclick="goTo(3)"><div class="step-num">3</div><div class="step-label">Préférences</div></div>
+  <div class="step-line"></div>
+  <div class="step-item inactive" id="step4-nav" onclick="goTo(4)"><div class="step-num">4</div><div class="step-label">Résultats</div></div>
+</div>
+
+<!-- STEP 1 -->
+<div id="step1">
+  <div class="card" style="animation-delay:.1s">
+    <div class="card-header"><div class="card-icon">🎓</div><div><div class="card-title">Informations personnelles</div><div class="card-subtitle">Parlez-nous de vous et de vos études</div></div></div>
+    <div class="field-grid">
+      <div class="field"><label>Prénom & Nom</label><input type="text" id="fullname" placeholder="ex: Mohamed Amine Ben Ali"></div>
+      <div class="field"><label>Domaine d'études <span class="req">*</span></label>
+        <select id="study_field">
+          <option value="">Sélectionner...</option>
+          <option>Informatique</option><option>Data Science / IA</option><option>Génie Logiciel</option>
+          <option>Réseaux & Télécom</option><option>Marketing Digital</option><option>Gestion & Commerce</option>
+          <option>Finance & Comptabilité</option><option>Droit</option><option>Design Graphique</option>
+          <option>Langues & Traduction</option><option>Sciences</option><option>Architecture</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="field"><label>Niveau d'études</label>
+        <select id="level"><option>Licence 1</option><option>Licence 2</option><option>Licence 3</option><option>Master 1</option><option selected>Master 2</option><option>Doctorat</option></select>
+      </div>
+      <div class="field"><label>Localisation <span class="req">*</span></label><input type="text" id="location" placeholder="ex: Tunis, Tunisie" value="Tunis, Tunisie"></div>
+      <div class="field field-span2"><label>Compétences <span class="req">*</span></label>
+        <div class="tags-wrapper" id="skills-wrapper" onclick="document.getElementById('skills-input').focus()">
+          <input class="tags-input" id="skills-input" placeholder="Tapez une compétence et appuyez Entrée...">
+        </div>
+      </div>
+      <div class="field field-span2"><label>Langues parlées</label>
+        <div class="tags-wrapper" id="langs-wrapper" onclick="document.getElementById('langs-input').focus()">
+          <input class="tags-input" id="langs-input" placeholder="ex: Arabe, Français, Anglais...">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="animation-delay:.2s">
+    <div class="card-header"><div class="card-icon">📄</div><div><div class="card-title">Votre CV <span style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(optionnel)</span></div><div class="card-subtitle">Importez votre CV pour enrichir votre profil</div></div></div>
+    <div class="cv-dropzone" id="cv-zone" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)" onclick="document.getElementById('cv-file').click()">
+      <input type="file" id="cv-file" accept=".pdf,.doc,.docx" onchange="fileSelected(event)">
+      <span class="cv-icon">📋</span>
+      <h3>Glissez votre CV ici</h3>
+      <p>PDF, DOC, DOCX — Max 10 MB</p>
+      <div class="cv-btn">📂 Choisir un fichier</div>
+    </div>
+    <div class="cv-preview" id="cv-preview">
+      <span style="font-size:28px">📄</span>
+      <div><div class="cv-preview-name" id="cv-name"></div><div class="cv-preview-size" id="cv-size"></div></div>
+      <button class="cv-remove" onclick="removeCV(event)">✕</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:8px">
+    <button class="submit-btn" onclick="goTo(2)" style="padding:14px 32px;font-size:14px">Suivant → Disponibilités</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div id="step2" style="display:none">
+  <div class="card">
+    <div class="card-header"><div class="card-icon">📅</div><div><div class="card-title">Disponibilités hebdomadaires</div><div class="card-subtitle">Cliquez sur les cases pour indiquer vos créneaux libres</div></div></div>
+    <div class="calendar-grid">
+      <div></div>
+      <div class="cal-header">Lun</div><div class="cal-header">Mar</div><div class="cal-header">Mer</div>
+      <div class="cal-header">Jeu</div><div class="cal-header">Ven</div><div class="cal-header">Sam</div><div class="cal-header">Dim</div>
+      <div class="cal-time-label"><span class="cal-dot" style="background:var(--morning)"></span>Matin<br><small style="opacity:.6;font-size:10px">8h–12h</small></div>
+      <div class="cal-cell" data-day="lun" data-slot="morning" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="mar" data-slot="morning" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="mer" data-slot="morning" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="jeu" data-slot="morning" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="ven" data-slot="morning" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="sam" data-slot="morning" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="dim" data-slot="morning" onclick="toggleCell(this)"></div>
+      <div class="cal-time-label"><span class="cal-dot" style="background:var(--afternoon)"></span>Après-midi<br><small style="opacity:.6;font-size:10px">12h–18h</small></div>
+      <div class="cal-cell" data-day="lun" data-slot="afternoon" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="mar" data-slot="afternoon" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="mer" data-slot="afternoon" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="jeu" data-slot="afternoon" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="ven" data-slot="afternoon" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="sam" data-slot="afternoon" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="dim" data-slot="afternoon" onclick="toggleCell(this)"></div>
+      <div class="cal-time-label"><span class="cal-dot" style="background:var(--evening)"></span>Soir<br><small style="opacity:.6;font-size:10px">18h–22h</small></div>
+      <div class="cal-cell" data-day="lun" data-slot="evening" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="mar" data-slot="evening" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="mer" data-slot="evening" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="jeu" data-slot="evening" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="ven" data-slot="evening" onclick="toggleCell(this)"></div><div class="cal-cell" data-day="sam" data-slot="evening" onclick="toggleCell(this)"></div>
+      <div class="cal-cell" data-day="dim" data-slot="evening" onclick="toggleCell(this)"></div>
+    </div>
+    <div class="cal-legend">
+      <div class="cal-legend-item"><div class="legend-dot" style="background:rgba(255,209,102,.5);border:1px solid rgba(255,209,102,.6)"></div>Matin (8h–12h)</div>
+      <div class="cal-legend-item"><div class="legend-dot" style="background:rgba(6,214,160,.5);border:1px solid rgba(6,214,160,.6)"></div>Après-midi (12h–18h)</div>
+      <div class="cal-legend-item"><div class="legend-dot" style="background:rgba(131,56,236,.5);border:1px solid rgba(131,56,236,.6)"></div>Soir (18h–22h)</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-icon">⏱️</div><div><div class="card-title">Volume horaire hebdomadaire</div></div></div>
+    <div class="field" style="margin-top:12px">
+      <div class="range-wrapper" style="margin-top:32px">
+        <div class="range-value" id="hours-value" style="left:37%">15h</div>
+        <input type="range" id="availability_hours" min="5" max="40" value="15" step="5" oninput="updateSlider(this,'hours-value',v=>v+'h')">
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:11px;color:var(--muted)">5h</span><span style="font-size:11px;color:var(--muted)">40h</span></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:8px">
+    <button class="submit-btn" onclick="goTo(1)" style="background:rgba(255,255,255,.06);box-shadow:none;padding:14px 24px;font-size:14px">← Retour</button>
+    <button class="submit-btn" onclick="goTo(3)" style="padding:14px 32px;font-size:14px">Suivant → Préférences</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step3" style="display:none">
+  <div class="card">
+    <div class="card-header"><div class="card-icon">🏢</div><div><div class="card-title">Type de travail souhaité</div><div class="card-subtitle">Où préférez-vous travailler ?</div></div></div>
+    <div class="job-type-grid">
+      <label class="job-type-btn"><input type="radio" name="job_type" value="remote"><div class="job-type-card"><div class="job-type-icon">🌐</div><div class="job-type-label">En ligne</div><div class="job-type-desc">100% télétravail, de n'importe où</div></div></label>
+      <label class="job-type-btn"><input type="radio" name="job_type" value="onsite" checked><div class="job-type-card"><div class="job-type-icon">🏙️</div><div class="job-type-label">Présentiel</div><div class="job-type-desc">Sur site dans votre ville</div></div></label>
+      <label class="job-type-btn"><input type="radio" name="job_type" value="hybrid"><div class="job-type-card"><div class="job-type-icon">🔀</div><div class="job-type-label">Hybride</div><div class="job-type-desc">Mix présentiel & remote</div></div></label>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-icon">💰</div><div><div class="card-title">Budget & Contrat</div></div></div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Salaire mensuel souhaité (TND)</label>
+        <div class="range-wrapper" style="margin-top:32px">
+          <div class="range-value" id="budget-value" style="left:20%">600 TND</div>
+          <input type="range" id="monthly_budget" min="200" max="3000" value="600" step="50" oninput="updateSlider(this,'budget-value',v=>v+' TND')">
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:11px;color:var(--muted)">200 TND</span><span style="font-size:11px;color:var(--muted)">3000 TND</span></div>
+      </div>
+      <div class="field"><label>Type de contrat</label>
+        <select id="contract_type"><option value="">Peu importe</option><option>Stage</option><option>CDD / Temps partiel</option><option>Freelance / Mission</option><option>CDI</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-icon">🎯</div><div><div class="card-title">Secteurs d'intérêt</div><div class="card-subtitle">Sélectionnez un ou plusieurs domaines</div></div></div>
+    <div id="sectors-grid" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:8px">
+    <button class="submit-btn" onclick="goTo(2)" style="background:rgba(255,255,255,.06);box-shadow:none;padding:14px 24px;font-size:14px">← Retour</button>
+    <button class="submit-btn" onclick="submitForm()"><span style="font-size:20px">✨</span> Trouver mes offres</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div id="step4" style="display:none">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">
+      <strong>L'IA analyse votre profil...</strong>
+      <div class="loading-steps">
+        <div class="loading-step" id="ls1"><span class="ldot"></span>Analyse du profil étudiant</div>
+        <div class="loading-step" id="ls2"><span class="ldot"></span>Génération des offres personnalisées</div>
+        <div class="loading-step" id="ls3"><span class="ldot"></span>Construction des liens de candidature</div>
+        <div class="loading-step" id="ls4"><span class="ldot"></span>Calcul du score de compatibilité</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="results-panel">
+    <div class="card">
+      <div class="results-header">
+        <div class="card-icon">🎯</div>
+        <div><div class="results-title">Offres recommandées pour vous</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Cliquez sur « Postuler » pour accéder directement à la plateforme</div></div>
+        <span class="results-count" id="results-count">0 offres</span>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterJobs('all',this)">Toutes</button>
+        <button class="filter-chip" onclick="filterJobs('remote',this)">🌐 Remote</button>
+        <button class="filter-chip" onclick="filterJobs('onsite',this)">🏢 Présentiel</button>
+        <button class="filter-chip" onclick="filterJobs('hybrid',this)">🔀 Hybride</button>
+      </div>
+      <div id="error-box"></div>
+      <div class="job-cards" id="job-cards"></div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:20px">
+      <button class="submit-btn" onclick="goTo(1)" style="background:rgba(255,255,255,.06);box-shadow:none;padding:14px 28px;font-size:14px">🔄 Nouvelle recherche</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ─── Tags ────────────────────────────────────────────────────
+const skillsList=[], langsList=[];
+function initTags(inputId,wrapperId,store){
+  const inp=document.getElementById(inputId), wrap=document.getElementById(wrapperId);
+  inp.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key===',')&&inp.value.trim()){
+      e.preventDefault();
+      const val=inp.value.trim().replace(/,$/,'');
+      if(val&&!store.includes(val)){
+        store.push(val);
+        const t=document.createElement('div');
+        t.className='tag'; t.dataset.val=val;
+        t.innerHTML=`${val} <button onclick="removeTag(this)">×</button>`;
+        wrap.insertBefore(t,inp);
+      }
+      inp.value='';
+    }
+  });
+}
+initTags('skills-input','skills-wrapper',skillsList);
+initTags('langs-input','langs-wrapper',langsList);
+function removeTag(btn){
+  const t=btn.closest('.tag'), val=t.dataset.val;
+  [skillsList,langsList].forEach(a=>{const i=a.indexOf(val);if(i>-1)a.splice(i,1);});
+  t.remove();
+}
+
+// ─── Calendar ────────────────────────────────────────────────
+function toggleCell(c){c.classList.toggle(`selected-${c.dataset.slot}`)}
+function getSchedule(){
+  const dl={lun:'Lundi',mar:'Mardi',mer:'Mercredi',jeu:'Jeudi',ven:'Vendredi',sam:'Samedi',dim:'Dimanche'};
+  const sl={morning:'matin',afternoon:'après-midi',evening:'soir'};
+  const r=[];
+  document.querySelectorAll('.cal-cell').forEach(c=>{if(c.classList.contains(`selected-${c.dataset.slot}`))r.push(`${dl[c.dataset.day]} ${sl[c.dataset.slot]}`)});
+  return r.length?r.join(', '):'horaires flexibles';
+}
+
+// ─── Slider ──────────────────────────────────────────────────
+function updateSlider(el,lid,fmt){
+  const l=document.getElementById(lid);
+  l.style.left=`calc(${(el.value-el.min)/(el.max-el.min)*100}% - 20px)`;
+  l.textContent=fmt(el.value);
+}
+
+// ─── CV ──────────────────────────────────────────────────────
+let cvFile=null;
+function fileSelected(e){if(e.target.files[0])showCV(e.target.files[0])}
+function dragOver(e){e.preventDefault();document.getElementById('cv-zone').classList.add('dragging')}
+function dragLeave(){document.getElementById('cv-zone').classList.remove('dragging')}
+function dropFile(e){e.preventDefault();dragLeave();if(e.dataTransfer.files[0])showCV(e.dataTransfer.files[0])}
+function showCV(f){cvFile=f;document.getElementById('cv-name').textContent=f.name;document.getElementById('cv-size').textContent=(f.size/1024/1024).toFixed(2)+' MB';document.getElementById('cv-preview').classList.add('show')}
+function removeCV(e){e.stopPropagation();cvFile=null;document.getElementById('cv-file').value='';document.getElementById('cv-preview').classList.remove('show')}
+
+// ─── Sectors ─────────────────────────────────────────────────
+const sectorList=['💻 Tech & Dev','📊 Data & IA','📱 Design UI/UX','📢 Marketing','💼 Finance','🔬 Recherche','✍️ Rédaction','🎓 Tutorat','🛒 E-commerce','📞 Support','🌍 Traduction','⚙️ Logistique'];
+const selectedSectors=new Set();
+(function(){
+  const g=document.getElementById('sectors-grid');
+  sectorList.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='sector-btn'; b.textContent=s;
+    b.onclick=()=>{if(selectedSectors.has(s)){selectedSectors.delete(s);b.classList.remove('active')}else{selectedSectors.add(s);b.classList.add('active')}};
+    g.appendChild(b);
+  });
+})();
+
+// ─── Steps ───────────────────────────────────────────────────
+function goTo(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById(`step${i}`).style.display=i===n?'block':'none';
+    const nav=document.getElementById(`step${i}-nav`);
+    nav.className='step-item '+(i<n?'done':i===n?'active':'inactive');
+    nav.querySelector('.step-num').textContent=i<n?'✓':i;
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── Loading ─────────────────────────────────────────────────
+function animateLoading(){
+  const ids=['ls1','ls2','ls3','ls4']; let i=0;
+  return setInterval(()=>{
+    ids.forEach(s=>document.getElementById(s).classList.remove('active'));
+    if(i<ids.length) document.getElementById(ids[i]).classList.add('active');
+    i=(i+1)%(ids.length+1);
+  },700);
+}
+
+// ─── Submit ──────────────────────────────────────────────────
+let allJobs=[];
+async function submitForm(){
+  const field=document.getElementById('study_field').value;
+  if(!field){alert('Veuillez sélectionner votre domaine d\'études.');return}
+  if(!skillsList.length){alert('Veuillez ajouter au moins une compétence.');return}
+
+  goTo(4);
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('results-panel').style.display='none';
+  const lt=animateLoading();
+
+  const jobType=document.querySelector('input[name="job_type"]:checked').value;
+  const location=document.getElementById('location').value||'Tunis, Tunisie';
+  const level=document.getElementById('level').value;
+  const budget=document.getElementById('monthly_budget').value;
+  const hours=document.getElementById('availability_hours').value;
+  const schedule=getSchedule();
+  const contract=document.getElementById('contract_type').value||'flexible';
+  const sectors=[...selectedSectors].join(', ')||'tous secteurs';
+  const hasCv=cvFile?'Oui':'Non';
+
+  const modeMap={remote:'en ligne / télétravail',onsite:'en présentiel',hybrid:'hybride'};
+  const urlGuide={
+    remote:`
+      - LinkedIn remote: https://www.linkedin.com/jobs/search/?keywords=TITRE_ENCODE&f_WT=2
+      - Upwork: https://www.upwork.com/nx/find-work/best-matches?q=TITRE_ENCODE
+      - Malt: https://www.malt.fr/s?q=TITRE_ENCODE
+      - Freelancer: https://www.freelancer.com/jobs/?keyword=TITRE_ENCODE`,
+    onsite:`
+      - TanitJobs: https://www.tanitjobs.com/jobs/?q=TITRE_ENCODE&l=tunis
+      - LinkedIn Tunisie: https://www.linkedin.com/jobs/search/?keywords=TITRE_ENCODE&location=Tunisie&f_WT=1
+      - Emploi.net: https://www.emploi.net/candidat/annonces?titre=TITRE_ENCODE&ville=tunis
+      - Tunisie Travail: https://www.tunisietravail.net/offres-emploi/`,
+    hybrid:`
+      - LinkedIn hybride: https://www.linkedin.com/jobs/search/?keywords=TITRE_ENCODE&f_WT=3&location=Tunisie
+      - TanitJobs: https://www.tanitjobs.com/jobs/?q=TITRE_ENCODE&l=tunis`
+  };
+
+  const prompt=`Tu es un expert en recrutement pour étudiants en Tunisie. Génère exactement 6 offres d'emploi pertinentes et réalistes pour ce profil.
+
+PROFIL ÉTUDIANT:
+- Domaine: ${field}
+- Niveau: ${level}
+- Localisation: ${location}
+- Compétences: ${skillsList.join(', ')}
+- Langues: ${langsList.join(', ')||'non précisé'}
+- Disponibilité: ${schedule}
+- Heures/semaine: ${hours}h
+- Type souhaité: ${modeMap[jobType]}
+- Salaire cible: ${budget} TND/mois
+- Contrat: ${contract}
+- Secteurs: ${sectors}
+- CV fourni: ${hasCv}
+
+INSTRUCTIONS:
+1. Génère un tableau JSON avec exactement 6 objets
+2. Chaque objet doit avoir ces champs (tous requis):
+   - "company": nom d'entreprise réaliste (ex: Vermeg, Sofrecom, BIAT, Upwork, etc.)
+   - "title": titre du poste précis adapté au profil
+   - "mode": exactement "remote", "onsite", ou "hybrid" (adapter au type souhaité: ${jobType})
+   - "location": ville ou "Remote"
+   - "salary": ex "600–900 TND/mois" (réaliste pour étudiant en Tunisie)
+   - "description": 1-2 phrases décrivant le poste
+   - "skills_needed": tableau de 2-3 compétences clés requises
+   - "match_score": entier entre 65 et 97
+   - "platform": nom de la plateforme (LinkedIn, TanitJobs, Upwork, Malt, etc.)
+   - "apply_url": URL réelle et fonctionnelle construite ainsi (remplace TITRE_ENCODE par le titre encodé URL en français):
+${urlGuide[jobType]}
+
+3. Varie les plateformes (pas toutes LinkedIn)
+4. Adapte précisément au domaine ${field} et aux compétences ${skillsList.join(', ')}
+5. Mode des offres: majorité en "${jobType}", quelques-unes mixées
+
+Réponds UNIQUEMENT avec le tableau JSON valide. Aucun texte avant ou après.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2500,messages:[{role:'user',content:prompt}]})
+    });
+    clearInterval(lt);
+    document.getElementById('loading').classList.remove('show');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    let txt=data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+    // extract JSON array robustly
+    const match=txt.match(/\[[\s\S]*\]/);
+    if(!match) throw new Error('No JSON array found');
+    const jobs=JSON.parse(match[0]);
+    allJobs=jobs;
+    showResults(jobs);
+  }catch(err){
+    clearInterval(lt);
+    document.getElementById('loading').classList.remove('show');
+    showFallback(jobType,field);
+  }
+}
+
+function showResults(jobs){
+  document.getElementById('results-panel').style.display='block';
+  document.getElementById('results-count').textContent=`${jobs.length} offres`;
+  buildCards(jobs);
+}
+
+function buildCards(jobs){
+  const container=document.getElementById('job-cards');
+  container.innerHTML='';
+  if(!jobs.length){container.innerHTML='<div class="error-msg" style="grid-column:span 2">Aucune offre pour ce filtre.</div>';return}
+  const mc={remote:'badge-remote',onsite:'badge-onsite',hybrid:'badge-hybrid'};
+  const ml={remote:'🌐 Remote',onsite:'🏢 Présentiel',hybrid:'🔀 Hybride'};
+  jobs.forEach((job,i)=>{
+    const mode=(job.mode||'onsite').toLowerCase();
+    const skills=(job.skills_needed||[]).slice(0,3).join(' · ');
+    const match=Math.min(97,Math.max(60,parseInt(job.match_score)||75));
+    const url=job.apply_url||'#';
+    const plat=job.platform||'Postuler';
+    const d=document.createElement('div');
+    d.className='job-card'; d.dataset.mode=mode; d.style.animationDelay=`${i*.08}s`;
+    d.innerHTML=`
+      <div class="job-card-top">
+        <div><div class="job-company">${job.company||'Entreprise'}</div><div class="job-title-card">${job.title}</div></div>
+        <span class="job-mode-badge ${mc[mode]||'badge-hybrid'}">${ml[mode]||mode}</span>
+      </div>
+      <div class="job-meta"><span>📍 ${job.location||'—'}</span>${skills?`<span>🏷️ ${skills}</span>`:''}</div>
+      <div class="job-desc">${job.description||''}</div>
+      <div class="job-salary">${job.salary||'—'}</div>
+      <div class="job-footer">
+        <div class="match-wrap">
+          <div class="match-bar-bg"><div class="match-bar" style="width:0%" data-w="${match}%"></div></div>
+          <span class="match-pct">${match}% match</span>
+        </div>
+        <a class="apply-btn" href="${url}" target="_blank" rel="noopener noreferrer">Postuler sur ${plat} →</a>
+      </div>`;
+    container.appendChild(d);
+  });
+  document.getElementById('results-count').textContent=`${jobs.length} offre${jobs.length>1?'s':''}`;
+  setTimeout(()=>document.querySelectorAll('.match-bar').forEach(b=>b.style.width=b.dataset.w),300);
+}
+
+function filterJobs(mode,btn){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  buildCards(mode==='all'?allJobs:allJobs.filter(j=>(j.mode||'').toLowerCase()===mode));
+}
+
+function showFallback(jobType,field){
+  const enc=encodeURIComponent(field);
+  const fallback=[
+    {company:'LinkedIn',title:`Stage / Emploi ${field} – Remote`,mode:'remote',location:'Remote',salary:'Variable',description:'Trouvez des centaines d\'offres sur la plus grande plateforme professionnelle mondiale.',skills_needed:[field],match_score:80,platform:'LinkedIn',apply_url:`https://www.linkedin.com/jobs/search/?keywords=stage+${enc}&f_WT=2`},
+    {company:'TanitJobs',title:`Offres ${field} – Tunis & environs`,mode:'onsite',location:'Tunis',salary:'400–900 TND',description:'La principale plateforme d\'emploi tunisienne, avec des milliers d\'offres locales.',skills_needed:[field],match_score:78,platform:'TanitJobs',apply_url:`https://www.tanitjobs.com/jobs/?q=${enc}&l=tunis`},
+    {company:'Upwork',title:`Missions Freelance – ${field}`,mode:'remote',location:'Mondial',salary:'Variable ($/heure)',description:'Décrochez des missions freelance internationales adaptées à vos compétences.',skills_needed:[field,'Freelance'],match_score:73,platform:'Upwork',apply_url:`https://www.upwork.com/nx/find-work/best-matches?q=${enc}`},
+    {company:'Emploi.net',title:`Emplois étudiants – ${field} Tunisie`,mode:'onsite',location:'Tunisie',salary:'400–1000 TND',description:'Portail d\'emploi tunisien dédié aux jeunes diplômés et aux stages.',skills_needed:[field],match_score:70,platform:'Emploi.net',apply_url:`https://www.emploi.net/candidat/annonces?titre=${enc}&ville=tunis`},
+    {company:'Malt',title:`Freelance ${field} – France & Monde`,mode:'remote',location:'Remote',salary:'Variable',description:'Plateforme freelance francophone pour trouver des missions à distance.',skills_needed:[field],match_score:68,platform:'Malt',apply_url:`https://www.malt.fr/s?q=${enc}`},
+    {company:'LinkedIn Hybride',title:`Poste hybride ${field} – Tunisie`,mode:'hybrid',location:'Tunis',salary:'500–1200 TND',description:'Offres hybrides combinant présentiel et télétravail en Tunisie.',skills_needed:[field],match_score:75,platform:'LinkedIn',apply_url:`https://www.linkedin.com/jobs/search/?keywords=${enc}&location=Tunisie&f_WT=3`},
+  ];
+  allJobs=fallback;
+  document.getElementById('error-box').innerHTML='<div class="error-msg">⚠️ Connexion API limitée — Voici des liens directs vers les meilleures plateformes de recrutement pour votre profil.</div>';
+  showResults(fallback);
+}
+
+// init sliders
+updateSlider(document.getElementById('availability_hours'),'hours-value',v=>v+'h');
+updateSlider(document.getElementById('monthly_budget'),'budget-value',v=>v+' TND');
+</script>
+</body>
+</html>
